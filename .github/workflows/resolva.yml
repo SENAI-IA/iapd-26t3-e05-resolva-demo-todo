@@ -42,6 +42,7 @@ jobs:
   implementation:
     runs-on: self-hosted
     env:
+      PATH: /home/user-sn-387444/.nvm/versions/node/v22.23.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       GH_TOKEN: ${{ github.token }}
       KIRO_EXECUTABLE: ${{ vars.KIRO_EXECUTABLE }}
       KIRO_API_KEY: ${{ secrets.KIRO_API_KEY }}
