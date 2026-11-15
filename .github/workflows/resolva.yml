@@ -1,0 +1,111 @@
+name: Resolva
+run-name: Resolva ${{ inputs.executionId }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      executionId:
+        description: Identidade da execução
+        required: true
+        type: string
+      ticketId:
+        description: Identidade do ticket
+        required: true
+        type: string
+      ticketVersion:
+        description: Versão do ticket
+        required: true
+        type: string
+      deliveryId:
+        description: Identidade da entrega
+        required: true
+        type: string
+      branchName:
+        description: Branch da entrega
+        required: true
+        type: string
+      snapshot:
+        description: Snapshot validado
+        required: true
+        type: string
+      snapshotHash:
+        description: Hash do snapshot
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  implementation:
+    runs-on: self-hosted
+    env:
+      GH_TOKEN: ${{ github.token }}
+      KIRO_EXECUTABLE: ${{ vars.KIRO_EXECUTABLE }}
+      KIRO_API_KEY: ${{ secrets.KIRO_API_KEY }}
+      RESOLVA_RUNNER_ROOT: ${{ vars.RESOLVA_RUNNER_ROOT }}
+      RESOLVA_CALLBACK_URL: ${{ vars.RESOLVA_CALLBACK_URL }}
+      RESOLVA_CALLBACK_TOKEN: ${{ secrets.RESOLVA_CALLBACK_TOKEN }}
+      RESOLVA_CALLBACK_ATTEMPTS: 3
+      RESOLVA_WORKFLOW_DEFINITION_ID: ${{ vars.RESOLVA_WORKFLOW_DEFINITION_ID }}
+      RESOLVA_EXECUTION_ID: ${{ inputs.executionId }}
+    steps:
+      - name: Checkout do sistema-alvo
+        uses: actions/checkout@v4
+        with:
+          clean: true
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+
+      - name: Preparar caminhos temporários
+        run: |
+          mkdir -p "$RUNNER_TEMP/resolva-report"
+          {
+            echo "RESOLVA_REPORT_PATH=$RUNNER_TEMP/resolva-report/report.json"
+            echo "RESOLVA_PUBLICATION_RESULT_PATH=$RUNNER_TEMP/resolva-publication.json"
+            echo "RESOLVA_PUBLICATION_JOURNAL_PATH=$RUNNER_TEMP/resolva-publication-journal.json"
+          } >> "$GITHUB_ENV"
+
+      - name: Validar runtime do Resolva
+        run: |
+          test -n "$RESOLVA_RUNNER_ROOT"
+          test -x "$KIRO_EXECUTABLE"
+          test -f "$RESOLVA_RUNNER_ROOT/backend/dist/integrations/ci/pipeline-cli.js"
+          node "$RESOLVA_RUNNER_ROOT/backend/dist/integrations/ci/preflight-cli.js"
+          mkdir -p "$(dirname "$RESOLVA_REPORT_PATH")"
+
+      - name: Receber snapshot validado
+        id: receive
+        run: |
+          request_path="$(node "$RESOLVA_RUNNER_ROOT/backend/dist/integrations/ci/receive-cli.js" "$GITHUB_WORKSPACE" "$RUNNER_TEMP")"
+          printf 'path=%s\n' "$request_path" >> "$GITHUB_OUTPUT"
+
+      - name: Executar implementação controlada
+        id: run
+        run: |
+          candidate_path="$(node "$RESOLVA_RUNNER_ROOT/backend/dist/integrations/ci/run-cli.js" "${{ steps.receive.outputs.path }}" "$GITHUB_WORKSPACE" "$RUNNER_TEMP")"
+          printf 'path=%s\n' "$candidate_path" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar branch, Pull Request e relatório
+        run: node "$RESOLVA_RUNNER_ROOT/backend/dist/integrations/ci/pipeline-cli.js" "${{ steps.receive.outputs.path }}" "${{ steps.run.outputs.path }}" "$RUNNER_TEMP/resolva-publish.json"
+
+      - name: Upload do relatório aprovado
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: resolva-report-${{ inputs.executionId }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/resolva-report/report.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Informar falha ao Resolva
+        if: ${{ failure() }}
+        continue-on-error: true
+        run: node "$RESOLVA_RUNNER_ROOT/backend/dist/integrations/ci/callback-status-cli.js" failure "Falha na workflow de implementação."
+
+      - name: Informar cancelamento ao Resolva
+        if: ${{ cancelled() }}
+        continue-on-error: true
+        run: node "$RESOLVA_RUNNER_ROOT/backend/dist/integrations/ci/callback-status-cli.js" cancelled "Workflow cancelada pelo provedor."
