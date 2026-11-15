@@ -19,7 +19,7 @@ export function toggleTodo(todos: readonly Todo[], id: string): Todo[] {
   const selected = todos.find((todo) => todo.id === id);
   if (!selected) return [...todos];
   return todos.map((todo) =>
-    todo.title === selected.title ? { ...todo, completed: !todo.completed } : todo,
+    todo.id === selected.id ? { ...todo, completed: !todo.completed } : todo,
   );
 }
 
