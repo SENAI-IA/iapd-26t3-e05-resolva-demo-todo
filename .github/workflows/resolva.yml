@@ -50,6 +50,7 @@ jobs:
       RESOLVA_CALLBACK_URL: ${{ vars.RESOLVA_CALLBACK_URL }}
       RESOLVA_CALLBACK_TOKEN: ${{ secrets.RESOLVA_CALLBACK_TOKEN }}
       RESOLVA_CALLBACK_ATTEMPTS: 3
+      RESOLVA_DEFER_SUCCESS_CALLBACK: "1"
       RESOLVA_WORKFLOW_DEFINITION_ID: ${{ vars.RESOLVA_WORKFLOW_DEFINITION_ID }}
       RESOLVA_EXECUTION_ID: ${{ inputs.executionId }}
     steps:
@@ -100,6 +101,10 @@ jobs:
           path: ${{ runner.temp }}/resolva-report/report.json
           if-no-files-found: error
           retention-days: 7
+
+      - name: Confirmar sucesso após upload
+        if: ${{ success() }}
+        run: node "$RESOLVA_RUNNER_ROOT/backend/dist/integrations/ci/callback-success-cli.js"
 
       - name: Informar falha ao Resolva
         if: ${{ failure() }}
