@@ -1,6 +1,8 @@
 # 🧪 Resolva Demo Todo
 
-📊 **Acompanhe a evolução:** [painel de status no GitHub Pages](https://senai-ia.github.io/iapd-26t3-e05-resolva-demo-todo/)
+🚀 **Aplicação funcionando:** [abrir Resolva Demo Todo](https://senai-ia.github.io/iapd-26t3-e05-resolva-demo-todo/)
+
+📊 **Status e evolução:** [abrir painel de acompanhamento](https://senai-ia.github.io/iapd-26t3-e05-resolva-demo-todo/status/)
 
 O painel é público e atualizado automaticamente pelo workflow do GitHub Pages
 sempre que o conteúdo de `docs/` mudar na branch `main`.
