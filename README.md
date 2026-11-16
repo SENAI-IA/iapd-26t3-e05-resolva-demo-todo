@@ -1,8 +1,25 @@
-# Alvo demo do Resolva
+# 🧪 Resolva Demo Todo
+
+📊 **Acompanhe a evolução:** [painel de status no GitHub Pages](https://senai-ia.github.io/iapd-26t3-e05-resolva-demo-todo/)
+
+> O painel é publicado automaticamente quando o GitHub Pages estiver habilitado
+> para este repositório.
 
 Fixture mínima de uma lista de tarefas usada para validar o fluxo do Resolva
 sem depender de um sistema externo. O alvo contém um bug conhecido e uma
 solicitação de melhoria separada.
+
+## 🤖 O que o Resolva faz neste sistema
+
+- 🎫 **Recebe tickets** com problemas ou melhorias solicitadas.
+- 🔎 **Analisa o código** e produz uma triagem com evidências.
+- 🛠️ **Propõe e implementa correções** no sistema-alvo.
+- 🧪 **Executa testes** para verificar se a alteração funciona.
+- 📦 **Publica a entrega** em uma branch e acompanha o resultado.
+- 📈 **Atualiza o painel de evolução** com o andamento de cada solicitação.
+
+Este repositório é o sistema-alvo usado pelo Resolva para demonstrar esse
+fluxo de ponta a ponta.
 
 ## Executar
 
@@ -21,3 +38,7 @@ como artefato local da execução.
 - Bug conhecido: `toggleTodo` altera tarefas com o mesmo título, em vez de
   alterar somente o ID selecionado.
 - Melhoria: filtrar tarefas por estado, conforme `docs/improvement.md`.
+
+## 🗺️ Evolução acompanhada
+
+O plano completo e o estado dos tickets estão em [`docs/evolution-plan.md`](docs/evolution-plan.md) e [`docs/status.json`](docs/status.json).
