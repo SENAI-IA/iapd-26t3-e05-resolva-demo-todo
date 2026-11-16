@@ -4,6 +4,8 @@ export type Todo = {
   completed: boolean;
 };
 
+export type TodoFilter = "all" | "pending" | "completed";
+
 export function createTodo(id: string, title: string): Todo {
   const normalizedId = id.trim();
   const normalizedTitle = title.trim();
@@ -17,10 +19,15 @@ export function addTodo(todos: readonly Todo[], todo: Todo): Todo[] {
 
 export function toggleTodo(todos: readonly Todo[], id: string): Todo[] {
   const selected = todos.find((todo) => todo.id === id);
-  if (!selected) return [...todos];
-  return todos.map((todo) =>
-    todo.title === selected.title ? { ...todo, completed: !todo.completed } : todo,
-  );
+  return selected
+    ? todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+    : [...todos];
+}
+
+export function filterTodos(todos: readonly Todo[], filter: TodoFilter): Todo[] {
+  if (filter === "pending") return todos.filter((todo) => !todo.completed);
+  if (filter === "completed") return todos.filter((todo) => todo.completed);
+  return [...todos];
 }
 
 export function pendingTodos(todos: readonly Todo[]): Todo[] {

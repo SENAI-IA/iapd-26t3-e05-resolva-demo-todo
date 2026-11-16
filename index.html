@@ -27,11 +27,20 @@
           />
           <button type="submit">Adicionar</button>
         </div>
+        <p id="form-error" class="form-error" role="alert" hidden></p>
       </form>
       <section aria-labelledby="todo-heading">
         <div class="section-heading">
           <h2 id="todo-heading">Tarefas</h2>
           <span id="todo-count" class="count"></span>
+        </div>
+        <div class="filters" aria-label="Filtrar tarefas">
+          <label for="todo-filter">Exibir</label>
+          <select id="todo-filter">
+            <option value="all">Todas</option>
+            <option value="pending">Pendentes</option>
+            <option value="completed">Concluídas</option>
+          </select>
         </div>
         <ul id="todo-list" class="todo-list"></ul>
         <p id="empty-state" class="empty-state">Nenhuma tarefa cadastrada.</p>

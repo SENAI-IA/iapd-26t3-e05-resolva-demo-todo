@@ -6,21 +6,21 @@
     {
       "id": 1,
       "title": "Tarefa com título repetido não alterna pelo ID",
-      "status": "planejado",
+      "status": "implementado",
       "description": "Corrigir a alteração de estado para afetar somente a tarefa selecionada.",
       "evidence": "docs/evolution-plan.md"
     },
     {
       "id": 2,
       "title": "Permitir filtrar tarefas por estado",
-      "status": "planejado",
+      "status": "implementado",
       "description": "Adicionar filtro para visualizar tarefas abertas, concluídas ou todas.",
       "evidence": "docs/evolution-plan.md"
     },
     {
       "id": 3,
       "title": "Rejeitar tarefas sem título no cadastro",
-      "status": "planejado",
+      "status": "implementado",
       "description": "Validar o título antes de criar uma tarefa.",
       "evidence": "docs/evolution-plan.md"
     }

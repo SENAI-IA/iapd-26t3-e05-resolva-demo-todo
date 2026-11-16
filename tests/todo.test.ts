@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { addTodo, createTodo, pendingTodos, removeTodo, toggleTodo } from "../src/todo.js";
+import {
+  addTodo,
+  createTodo,
+  filterTodos,
+  pendingTodos,
+  removeTodo,
+  toggleTodo,
+} from "../src/todo.js";
 
 const firstTodo = createTodo("todo-1", "Estudar requisitos");
 const secondTodo = createTodo("todo-2", "Executar testes");
@@ -24,8 +31,28 @@ describe("lista de tarefas", () => {
     ]);
   });
 
+  it("alterna somente o ID selecionado quando os títulos se repetem", () => {
+    const repeated = [firstTodo, { ...secondTodo, title: firstTodo.title }];
+    expect(toggleTodo(repeated, firstTodo.id)).toEqual([
+      { ...firstTodo, completed: true },
+      { ...secondTodo, title: firstTodo.title },
+    ]);
+  });
+
   it("lista apenas tarefas pendentes", () => {
     expect(pendingTodos([{ ...firstTodo, completed: true }, secondTodo])).toEqual([secondTodo]);
+  });
+
+  it("filtra tarefas sem alterar a lista original", () => {
+    const todos = [{ ...firstTodo, completed: true }, secondTodo];
+    expect(filterTodos(todos, "completed")).toEqual([{ ...firstTodo, completed: true }]);
+    expect(filterTodos(todos, "pending")).toEqual([secondTodo]);
+    expect(filterTodos(todos, "all")).toEqual(todos);
+    expect(todos).toEqual([{ ...firstTodo, completed: true }, secondTodo]);
+  });
+
+  it("rejeita títulos vazios", () => {
+    expect(() => createTodo("todo-4", "   ")).toThrow("ID e título");
   });
 
   it("remove a tarefa pelo ID", () => {

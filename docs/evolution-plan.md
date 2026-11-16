@@ -12,10 +12,10 @@ O plano deve permitir identificar o que foi solicitado, qual alteração foi fei
 
 ## Estado atual
 
-- A aplicação possui criação, conclusão e remoção de tarefas.
-- A validação de título já existe no domínio, mas a interface ainda não mostra mensagem para entrada inválida.
-- `toggleTodo` ainda alterna todas as tarefas com o mesmo título.
-- O filtro por estado ainda não existe.
+- A aplicação possui criação, conclusão, remoção e filtragem de tarefas.
+- A validação de título existe no domínio e exibe mensagem clara na interface.
+- `toggleTodo` altera somente o ID selecionado, inclusive com títulos repetidos.
+- Os três tickets da primeira evolução estão implementados e cobertos por testes.
 - Painel público: <https://senai-ia.github.io/iapd-26t3-e05-resolva-demo-todo/>.
 
 ## Tickets e definição de pronto
@@ -28,7 +28,7 @@ O plano deve permitir identificar o que foi solicitado, qual alteração foi fei
 
 Um ticket só pode ser marcado como `implementado` quando tiver código dentro do escopo, teste automatizado, `pnpm test`, `pnpm build` e evidência registrada na PR ou no histórico do Resolva.
 
-## Fase 1 — corrigir seleção por ID
+## Fase 1 — corrigir seleção por ID ✅
 
 Alterar `toggleTodo` para comparar o `id` de cada item, nunca o título.
 
@@ -40,7 +40,7 @@ Critérios de aceite:
 - a ordem dos itens é preservada;
 - os testes existentes continuam passando.
 
-## Fase 2 — adicionar filtro por estado
+## Fase 2 — adicionar filtro por estado ✅
 
 Adicionar no domínio uma operação de filtragem e, na interface, um controle com as opções `todas`, `pendentes` e `concluídas`.
 
@@ -51,7 +51,7 @@ Critérios de aceite:
 - a seleção permanece após concluir ou remover um item;
 - o comportamento é coberto por testes de domínio e interação.
 
-## Fase 3 — fortalecer validação de entrada
+## Fase 3 — fortalecer validação de entrada ✅
 
 Manter a regra no domínio e conectá-la à interface sem duplicar a validação. O formulário deve informar o erro e manter os demais campos utilizáveis.
 
