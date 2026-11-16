@@ -5,6 +5,12 @@ on:
     branches: [main]
     paths:
       - docs/**
+      - index.html
+      - src/**
+      - package.json
+      - pnpm-lock.yaml
+      - tsconfig.json
+      - vite.config.ts
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -28,10 +34,27 @@ jobs:
         uses: actions/checkout@v4
       - name: Configurar Pages
         uses: actions/configure-pages@v5
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Habilitar pnpm
+        run: corepack enable
+      - name: Instalar dependências
+        run: pnpm install --frozen-lockfile
+      - name: Compilar aplicação
+        run: pnpm build
+      - name: Adicionar painel de evolução
+        run: |
+          mkdir -p dist/status
+          cp docs/index.html dist/status/index.html
+          cp docs/status.json dist/status/status.json
+          cp docs/evolution-plan.md dist/status/evolution-plan.md
       - name: Preparar artefato
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: dist
       - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4
