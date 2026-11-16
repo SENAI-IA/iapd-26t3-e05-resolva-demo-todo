@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Resolva · Evolução do sistema alvo</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #111827; color: #e5e7eb; }
+      body { margin: 0; background: radial-gradient(circle at top right, #1f3b5b, #111827 42%); }
+      main { max-width: 980px; margin: 0 auto; padding: 48px 22px 64px; }
+      h1 { margin-bottom: 8px; font-size: clamp(2rem, 5vw, 3.4rem); }
+      h2 { margin-top: 42px; }
+      .muted { color: #9ca3af; }
+      .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin: 30px 0; }
+      .card, .ticket { background: rgba(31, 41, 55, .86); border: 1px solid #374151; border-radius: 14px; padding: 18px; box-shadow: 0 12px 30px rgba(0,0,0,.16); }
+      .number { display: block; font-size: 2rem; font-weight: 800; color: #93c5fd; }
+      .tickets { display: grid; gap: 14px; }
+      .ticket { display: grid; grid-template-columns: 1fr auto; gap: 10px 18px; }
+      .ticket h3 { margin: 0; color: #f9fafb; }
+      .ticket p { margin: 8px 0 0; color: #cbd5e1; }
+      .status { align-self: start; border-radius: 999px; padding: 6px 10px; font-size: .82rem; font-weight: 700; background: #854d0e; color: #fef3c7; }
+      a { color: #93c5fd; }
+      footer { margin-top: 38px; color: #9ca3af; font-size: .9rem; }
+      @media (max-width: 600px) { .ticket { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="muted">SENAI-IA · acompanhamento do sistema alvo</p>
+      <h1>Resolva Demo Todo</h1>
+      <p class="muted">Painel público da evolução solicitada ao Resolva.</p>
+      <section class="summary" aria-label="Resumo">
+        <div class="card"><span class="number" id="total">—</span>tickets acompanhados</div>
+        <div class="card"><span class="number" id="done">—</span>implementados</div>
+        <div class="card"><span class="number" id="pending">—</span>pendentes</div>
+      </section>
+      <h2>Plano de evolução</h2>
+      <div class="tickets" id="tickets"><p class="muted">Carregando status…</p></div>
+      <footer>Atualizado em <span id="updated">—</span> · <a href="https://github.com/SENAI-IA/iapd-26t3-e05-resolva-demo-todo">ver repositório</a> · <a href="https://github.com/SENAI-IA/iapd-26t3-e05-resolva-demo-todo/actions">ver workflows</a></footer>
+    </main>
+    <script>
+      const labels = { planejado: 'Planejado', em_andamento: 'Em andamento', implementado: 'Implementado', bloqueado: 'Bloqueado' };
+      fetch('./status.json').then((response) => response.json()).then((data) => {
+        const tickets = data.tickets || [];
+        const implemented = tickets.filter((ticket) => ticket.status === 'implementado').length;
+        document.querySelector('#total').textContent = tickets.length;
+        document.querySelector('#done').textContent = implemented;
+        document.querySelector('#pending').textContent = tickets.length - implemented;
+        document.querySelector('#updated').textContent = data.updatedAt || 'não informado';
+        document.querySelector('#tickets').innerHTML = tickets.map((ticket) => `
+          <article class="ticket">
+            <div><h3>#${ticket.id} · ${ticket.title}</h3><p>${ticket.description}</p><p><a href="${ticket.evidence}">evidência e plano</a></p></div>
+            <span class="status">${labels[ticket.status] || ticket.status}</span>
+          </article>`).join('');
+      }).catch(() => { document.querySelector('#tickets').innerHTML = '<p>Não foi possível carregar o status.</p>'; });
+    </script>
+  </body>
+</html>
