@@ -7,6 +7,7 @@ import {
   removeCompletedTodos,
   removeTodo,
   toggleTodo,
+  updateTodoTitle,
 } from "../src/todo.js";
 
 const firstTodo = createTodo("todo-1", "Estudar requisitos");
@@ -64,5 +65,13 @@ describe("lista de tarefas", () => {
     expect(removeCompletedTodos([{ ...firstTodo, completed: true }, secondTodo])).toEqual([
       secondTodo,
     ]);
+  });
+
+  it("atualiza somente o título do ID selecionado", () => {
+    expect(updateTodoTitle([firstTodo, secondTodo], firstTodo.id, "  Novo título ")).toEqual([
+      { ...firstTodo, title: "Novo título" },
+      secondTodo,
+    ]);
+    expect(() => updateTodoTitle([firstTodo], firstTodo.id, "   ")).toThrow("título");
   });
 });

@@ -17,6 +17,12 @@ export function addTodo(todos: readonly Todo[], todo: Todo): Todo[] {
   return [...todos, todo];
 }
 
+export function updateTodoTitle(todos: readonly Todo[], id: string, title: string): Todo[] {
+  const normalizedTitle = title.trim();
+  if (!normalizedTitle) throw new Error("Uma tarefa precisa de título.");
+  return todos.map((todo) => (todo.id === id ? { ...todo, title: normalizedTitle } : todo));
+}
+
 export function toggleTodo(todos: readonly Todo[], id: string): Todo[] {
   const selected = todos.find((todo) => todo.id === id);
   return selected

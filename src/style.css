@@ -185,6 +185,19 @@ button {
   font-size: 0.85rem;
 }
 
+.todo-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.4rem;
+}
+
+.edit-button {
+  padding: 0.45rem 0.7rem;
+  background: #e9f0eb;
+  color: #182c28;
+  font-size: 0.85rem;
+}
+
 .empty-state {
   margin: 1rem 0 0;
   color: #4e625d;

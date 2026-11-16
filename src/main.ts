@@ -7,6 +7,7 @@ import {
   toggleTodo,
   type Todo,
   type TodoFilter,
+  updateTodoTitle,
 } from "./todo.js";
 import "./style.css";
 
@@ -86,7 +87,26 @@ function render() {
         saveTodos();
         render();
       });
-      item.append(label, remove);
+      const edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "edit-button";
+      edit.textContent = "Editar";
+      edit.addEventListener("click", () => {
+        const title = window.prompt("Novo título da tarefa", todo.title);
+        if (title === null) return;
+        try {
+          todos = updateTodoTitle(todos, todo.id, title);
+          saveTodos();
+          render();
+        } catch (error) {
+          todoFormError.textContent = error instanceof Error ? error.message : "Título inválido.";
+          todoFormError.hidden = false;
+        }
+      });
+      const actions = document.createElement("div");
+      actions.className = "todo-actions";
+      actions.append(edit, remove);
+      item.append(label, actions);
       return item;
     }),
   );
