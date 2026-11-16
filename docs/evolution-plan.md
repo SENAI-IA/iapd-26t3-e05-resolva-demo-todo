@@ -2,59 +2,99 @@
 
 ## Objetivo
 
-Usar o sistema-alvo como uma demonstração pequena e repetível do fluxo local do
-Resolva: ticket → triagem → execução Kiro → testes → branch → Pull Request.
+Transformar este sistema-alvo em uma demonstração pequena, repetível e verificável do fluxo do Resolva:
 
-## Fase 1 — corrigir o bug de seleção
+```text
+ticket → triagem → implementação → testes → evidências → entrega
+```
 
-Corrigir `toggleTodo` para alterar somente a tarefa cujo `id` foi selecionado,
-mesmo quando duas tarefas possuem o mesmo título.
+O plano deve permitir identificar o que foi solicitado, qual alteração foi feita e quais testes comprovam o resultado.
+
+## Estado atual
+
+- A aplicação possui criação, conclusão e remoção de tarefas.
+- A validação de título já existe no domínio, mas a interface ainda não mostra mensagem para entrada inválida.
+- `toggleTodo` ainda alterna todas as tarefas com o mesmo título.
+- O filtro por estado ainda não existe.
+- Painel público: <https://senai-ia.github.io/iapd-26t3-e05-resolva-demo-todo/>.
+
+## Tickets e definição de pronto
+
+| Ordem | Ticket | Resultado esperado | Evidência mínima |
+| --- | --- | --- | --- |
+| 1 | Seleção por ID | somente o item selecionado muda de estado | teste de domínio com títulos repetidos |
+| 2 | Filtro por estado | todas, pendentes e concluídas sem alterar a lista original | testes de domínio e interação |
+| 3 | Validação de entrada | entrada inválida é rejeitada com mensagem clara | testes de domínio e interface |
+
+Um ticket só pode ser marcado como `implementado` quando tiver código dentro do escopo, teste automatizado, `pnpm test`, `pnpm build` e evidência registrada na PR ou no histórico do Resolva.
+
+## Fase 1 — corrigir seleção por ID
+
+Alterar `toggleTodo` para comparar o `id` de cada item, nunca o título.
 
 Critérios de aceite:
 
 - duas tarefas com o mesmo título podem coexistir;
 - alternar uma tarefa não altera a outra;
-- IDs inexistentes não alteram a lista;
-- os cinco testes atuais continuam passando.
+- IDs inexistentes retornam uma cópia equivalente sem alterar a lista;
+- a ordem dos itens é preservada;
+- os testes existentes continuam passando.
 
 ## Fase 2 — adicionar filtro por estado
 
-Adicionar um filtro com as opções `todas`, `pendentes` e `concluídas`, preservando
-a ordem original da lista.
+Adicionar no domínio uma operação de filtragem e, na interface, um controle com as opções `todas`, `pendentes` e `concluídas`.
 
 Critérios de aceite:
 
 - o filtro não altera os dados armazenados;
-- tarefas pendentes e concluídas aparecem corretamente;
-- a opção `todas` restaura a lista completa;
-- o comportamento é coberto por testes de domínio e interface.
+- cada opção exibe somente os itens correspondentes e preserva a ordem original;
+- a seleção permanece após concluir ou remover um item;
+- o comportamento é coberto por testes de domínio e interação.
 
 ## Fase 3 — fortalecer validação de entrada
 
-Manter a rejeição de IDs e títulos vazios e exibir uma mensagem de erro clara no
-formulário, sem inserir tarefas inválidas.
+Manter a regra no domínio e conectá-la à interface sem duplicar a validação. O formulário deve informar o erro e manter os demais campos utilizáveis.
 
 Critérios de aceite:
 
-- título vazio ou somente com espaços é rejeitado;
-- ID vazio ou somente com espaços é rejeitado;
-- nenhuma tarefa inválida é adicionada;
-- a interface preserva o restante do formulário após o erro.
+- título vazio ou somente com espaços não cria tarefa;
+- o domínio continua rejeitando ID vazio ou título vazio;
+- a interface exibe mensagem acessível para título inválido;
+- após corrigir o valor, o cadastro funciona normalmente.
 
-## Fase 4 — operação pelo Resolva
+Nota: o ID é gerado pela interface; sua validação permanece no domínio e não precisa de um segundo campo visível.
 
-- analisar os três tickets cadastrados;
-- executar primeiro o bug de seleção por ID;
-- executar depois a melhoria de filtro;
-- confirmar os testes e a PR antes de resolver cada ticket;
-- registrar o resultado no histórico do ticket.
+## Fase 4 — executar pelo Resolva
+
+1. Criar ou confirmar os três tickets no Resolva.
+2. Rodar a triagem e revisar as evidências.
+3. Implementar o ticket 1 antes do ticket 2.
+4. Implementar o ticket 3 sem copiar regras do domínio para a interface.
+5. Executar `pnpm test` e `pnpm build` após cada entrega.
+6. Atualizar `docs/status.json` somente com evidências verificáveis.
+7. Confirmar a PR e o resultado antes de marcar o ticket como `implementado`.
+
+## Comandos de verificação
+
+```bash
+pnpm install
+pnpm test
+pnpm test:json
+pnpm build
+```
+
+## Fora do escopo
+
+- autenticação ou persistência em banco;
+- alteração da arquitetura do sistema-alvo;
+- novas regras de negócio não descritas nos tickets;
+- marcar tickets como concluídos sem teste e evidência.
 
 ## Ordem recomendada
 
-1. Bug de seleção por ID.
+1. Seleção por ID.
 2. Filtro por estado.
-3. Validação de entrada.
-4. Melhorias visuais e documentação.
+3. Validação de entrada na interface.
+4. Atualização do painel, documentação e evidências.
 
-O trabalho escolar deve usar o modo local do Resolva; GitHub Actions fica como
-modo opcional para uma execução posterior.
+O trabalho escolar pode usar o modo local do Resolva. GitHub Actions permanece disponível como modo posterior e como fonte de evidências públicas.
