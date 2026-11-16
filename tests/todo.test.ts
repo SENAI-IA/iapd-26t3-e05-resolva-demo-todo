@@ -4,6 +4,7 @@ import {
   createTodo,
   filterTodos,
   pendingTodos,
+  removeCompletedTodos,
   removeTodo,
   toggleTodo,
 } from "../src/todo.js";
@@ -57,5 +58,11 @@ describe("lista de tarefas", () => {
 
   it("remove a tarefa pelo ID", () => {
     expect(removeTodo([firstTodo, secondTodo], firstTodo.id)).toEqual([secondTodo]);
+  });
+
+  it("remove somente as tarefas concluídas", () => {
+    expect(removeCompletedTodos([{ ...firstTodo, completed: true }, secondTodo])).toEqual([
+      secondTodo,
+    ]);
   });
 });

@@ -37,3 +37,7 @@ export function pendingTodos(todos: readonly Todo[]): Todo[] {
 export function removeTodo(todos: readonly Todo[], id: string): Todo[] {
   return todos.filter((todo) => todo.id !== id);
 }
+
+export function removeCompletedTodos(todos: readonly Todo[]): Todo[] {
+  return todos.filter((todo) => !todo.completed);
+}

@@ -2,6 +2,7 @@ import {
   addTodo,
   createTodo,
   filterTodos,
+  removeCompletedTodos,
   removeTodo,
   toggleTodo,
   type Todo,
@@ -19,8 +20,9 @@ const count = document.querySelector<HTMLSpanElement>("#todo-count");
 const emptyState = document.querySelector<HTMLParagraphElement>("#empty-state");
 const formError = document.querySelector<HTMLParagraphElement>("#form-error");
 const filter = document.querySelector<HTMLSelectElement>("#todo-filter");
+const clearCompleted = document.querySelector<HTMLButtonElement>("#clear-completed");
 
-if (!form || !titleInput || !list || !count || !emptyState || !formError || !filter)
+if (!form || !titleInput || !list || !count || !emptyState || !formError || !filter || !clearCompleted)
   throw new Error("Interface incompleta.");
 
 const todoList = list;
@@ -28,7 +30,33 @@ const todoCount = count;
 const todoEmptyState = emptyState;
 const todoFormError = formError;
 const todoFilter = filter;
+const todoClearCompleted = clearCompleted;
 let selectedFilter: TodoFilter = "all";
+
+function saveTodos() {
+  localStorage.setItem("resolva-demo-todos", JSON.stringify(todos));
+}
+
+function loadTodos() {
+  try {
+    const saved: unknown = JSON.parse(localStorage.getItem("resolva-demo-todos") ?? "null");
+    if (!Array.isArray(saved)) return;
+    todos = saved.filter(
+      (todo): todo is Todo =>
+        Boolean(todo) &&
+        typeof todo === "object" &&
+        typeof todo.id === "string" &&
+        typeof todo.title === "string" &&
+        typeof todo.completed === "boolean",
+    );
+    nextId = todos.reduce((highest, todo) => {
+      const match = /^todo-(\d+)$/u.exec(todo.id);
+      return Math.max(highest, match ? Number(match[1]) + 1 : highest);
+    }, 1);
+  } catch {
+    todos = [];
+  }
+}
 
 function render() {
   const visibleTodos = filterTodos(todos, selectedFilter);
@@ -42,6 +70,7 @@ function render() {
       checkbox.checked = todo.completed;
       checkbox.addEventListener("change", () => {
         todos = toggleTodo(todos, todo.id);
+        saveTodos();
         render();
       });
       const text = document.createElement("span");
@@ -54,6 +83,7 @@ function render() {
       remove.textContent = "Remover";
       remove.addEventListener("click", () => {
         todos = removeTodo(todos, todo.id);
+        saveTodos();
         render();
       });
       item.append(label, remove);
@@ -90,12 +120,19 @@ form.addEventListener("submit", (event) => {
   todoFormError.hidden = true;
   todoFormError.textContent = "";
   titleInput.value = "";
+  saveTodos();
   render();
   titleInput.focus();
 });
 
 todoFilter.addEventListener("change", () => {
   selectedFilter = todoFilter.value as TodoFilter;
+  render();
+});
+
+todoClearCompleted.addEventListener("click", () => {
+  todos = removeCompletedTodos(todos);
+  saveTodos();
   render();
 });
 
@@ -106,4 +143,5 @@ titleInput.addEventListener("input", () => {
   }
 });
 
+loadTodos();
 render();
