@@ -2,8 +2,8 @@
 
 📊 **Acompanhe a evolução:** [painel de status no GitHub Pages](https://senai-ia.github.io/iapd-26t3-e05-resolva-demo-todo/)
 
-> O painel é publicado automaticamente quando o GitHub Pages estiver habilitado
-> para este repositório.
+O painel é público e atualizado automaticamente pelo workflow do GitHub Pages
+sempre que o conteúdo de `docs/` mudar na branch `main`.
 
 Fixture mínima de uma lista de tarefas usada para validar o fluxo do Resolva
 sem depender de um sistema externo. O alvo contém um bug conhecido e uma
