@@ -33,7 +33,8 @@ export function toggleTodo(todos: readonly Todo[], id: string): Todo[] {
 export function filterTodos(todos: readonly Todo[], filter: TodoFilter): Todo[] {
   if (filter === "pending") return todos.filter((todo) => !todo.completed);
   if (filter === "completed") return todos.filter((todo) => todo.completed);
-  return [...todos];
+  if (filter === "all") return [...todos];
+  throw new Error("Filtro de tarefas desconhecido.");
 }
 
 export function pendingTodos(todos: readonly Todo[]): Todo[] {
